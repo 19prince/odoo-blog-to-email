@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mailing_blog_to_email_starter" model="mailing.mailing">
+        <field name="subject">Recent Posts — Your Newsletter</field>
+        <field name="mailing_type">mail</field>
+        <field name="state">draft</field>
+        <field name="body_arch"><![CDATA[<div class="o_layout oe_unremovable oe_unmovable bg-200 o_empty_theme" data-name="Mailing"><style id="design-element"></style><div class="container o_mail_wrapper o_mail_regular oe_unremovable"><div class="row"><div class="col o_mail_no_options o_mail_wrapper_td bg-white oe_structure o_editable theme_selection_done">
+
+<!-- Header -->
+<div class="s_picture o_mail_snippet_general" style="background-color: #ffffff; padding: 24px 32px;" data-snippet="s_picture" data-name="Header">
+    <div class="container s_allow_columns">
+        <p style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0;">Your Newsletter</p>
+    </div>
+</div>
+
+<!-- Intro -->
+<div class="s_text_block o_mail_snippet_general" style="background-color: #ffffff; padding: 32px 32px 24px;" data-snippet="s_text_block" data-name="Intro">
+    <div class="container s_allow_columns">
+        <p style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 16px; line-height: 1.6; color: #333333; margin: 0;">Welcome — here are the latest posts from the blog.</p>
+    </div>
+</div>
+
+<!-- BLOG_POSTS_SLOT:START -->
+<!-- BLOG_POSTS_SLOT:END -->
+
+<!-- Footer -->
+<div class="s_footer_social o_mail_block_footer_social o_mail_footer_social_center o_mail_snippet_general bg-200 pt16" data-snippet="s_mail_block_footer_social" data-name="Footer Center">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg o_mail_footer_links o_default_snippet_text" style="text-align: center;">
+                <a role="button" href="/unsubscribe_from_list" class="btn btn-link o_default_snippet_text">Unsubscribe</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div></div></div></div>
+]]></field>
+        <field name="body_html"><![CDATA[<div class="o_layout oe_unremovable oe_unmovable bg-200 o_empty_theme" data-name="Mailing"><style id="design-element"></style><div class="container o_mail_wrapper o_mail_regular oe_unremovable"><div class="row"><div class="col o_mail_no_options o_mail_wrapper_td bg-white oe_structure o_editable theme_selection_done">
+
+<!-- Header -->
+<div class="s_picture o_mail_snippet_general" style="background-color: #ffffff; padding: 24px 32px;" data-snippet="s_picture" data-name="Header">
+    <div class="container s_allow_columns">
+        <p style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0;">Your Newsletter</p>
+    </div>
+</div>
+
+<!-- Intro -->
+<div class="s_text_block o_mail_snippet_general" style="background-color: #ffffff; padding: 32px 32px 24px;" data-snippet="s_text_block" data-name="Intro">
+    <div class="container s_allow_columns">
+        <p style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 16px; line-height: 1.6; color: #333333; margin: 0;">Welcome — here are the latest posts from the blog.</p>
+    </div>
+</div>
+
+<!-- BLOG_POSTS_SLOT:START -->
+<!-- BLOG_POSTS_SLOT:END -->
+
+<!-- Footer -->
+<div class="s_footer_social o_mail_block_footer_social o_mail_footer_social_center o_mail_snippet_general bg-200 pt16" data-snippet="s_mail_block_footer_social" data-name="Footer Center">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg o_mail_footer_links o_default_snippet_text" style="text-align: center;">
+                <a role="button" href="/unsubscribe_from_list" class="btn btn-link o_default_snippet_text">Unsubscribe</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div></div></div></div>
+]]></field>
+    </record>
+</odoo>
