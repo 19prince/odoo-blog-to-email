@@ -1,6 +1,8 @@
 # Odoo Blog to Email
 
-An Odoo 18 module that automatically refreshes an email mailing with your latest tagged blog posts whenever you publish. No scripts, no manual steps — publish a post and your mailing updates itself.
+An Odoo module that automatically refreshes an email mailing with your latest tagged blog posts whenever you publish. No scripts, no manual steps — publish a post and your mailing updates itself.
+
+> **Multi-version:** branches `18.0` and `19.0` are available — install from the branch that matches your Odoo version.
 
 ---
 
@@ -15,7 +17,7 @@ An Odoo 18 module that automatically refreshes an email mailing with your latest
 
 ## Requirements
 
-- Odoo 18.0 (Community or Enterprise)
+- Odoo 18.0 or 19.0 (Community or Enterprise) — use the branch matching your version
 - The following apps must be installed:
   - **Blog** (`website_blog`) — Odoo's website blog
   - **Email Marketing** (`mass_mailing`)
