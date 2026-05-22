@@ -127,7 +127,10 @@ class BlogPost(models.Model):
             _logger.warning('odoo_blog_to_email: invalid auto_mailing_id %r — skipping', mailing_id_str)
             return
 
-        post_count = int(get_param('odoo_blog_to_email.auto_mailing_post_count') or 3)
+        try:
+            post_count = int(get_param('odoo_blog_to_email.auto_mailing_post_count') or 3)
+        except (TypeError, ValueError):
+            post_count = 3
         tag_name   = (get_param('odoo_blog_to_email.auto_mailing_tag') or 'Newsletter').lower()
         base_url   = (get_param('web.base.url') or '').rstrip('/')
 
