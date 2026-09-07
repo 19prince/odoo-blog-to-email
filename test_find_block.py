@@ -8,7 +8,7 @@ odoo.api = types.SimpleNamespace(model_create_multi=lambda f: f)
 sys.modules['odoo'] = odoo
 sys.path.insert(0, 'odoo_blog_to_email/models')
 
-from blog_post import _find_block, _splice_block, _build_posts_block, BLOCK_ANCHOR, SLOT_START, SLOT_END  # noqa: E402
+from blog_post import _find_block, _splice_block, _build_posts_block, _html_body, BLOCK_ANCHOR, SLOT_START, SLOT_END  # noqa: E402
 
 POSTS = [{'name': 'Newest', 'teaser': 'a', 'url': 'https://example.com/blog/a-1'},
          {'name': 'Older', 'teaser': 'b', 'url': 'https://example.com/blog/b-2'}]
@@ -52,3 +52,19 @@ else:
     assert _splice_block(Markup(f'{SLOT_START}\n{SLOT_END}'), newer).startswith('<div')
     assert _splice_block(Markup('<div>no anchor</div>'), newer) is None
     print('ok')
+
+
+# the blank-email regression: body_html is serialised as XML, so an empty <style>
+# comes back as <style/>, which opens RAWTEXT in every real HTML parser and eats
+# the rest of the mailing. Nothing may be left for the serialiser to self-close.
+arch = '<div class="o_layout"><style id="design-element"></style><p>body</p></div>'
+out = _html_body(arch)
+assert '<style id="design-element">/**/</style>' in out, out
+assert '<p>body</p>' in out
+assert _html_body('<STYLE >\n</STYLE ><p>x</p>').count('/**/') == 1
+# a style that already carries CSS is left exactly as it was
+css = '<style>.a{color:red}</style>'
+assert _html_body(css) == css
+# and nothing else in the body is touched
+assert _html_body('<div></div><span></span>') == '<div></div><span></span>'
+print('ok — html body check passed')
