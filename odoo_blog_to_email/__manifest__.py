@@ -1,6 +1,6 @@
 {
     'name': 'Odoo Blog to Email',
-    'version': '19.0.2.0.0',
+    'version': '19.0.3.0.0',
     'category': 'Email Marketing',
     'summary': 'Refreshes a mailing when a tagged blog post is published. Configurable in Settings.',
     'author': '19 Prince',
@@ -9,6 +9,7 @@
     'depends': ['website_blog', 'mass_mailing'],
     'data': [
         'data/mailing_starter.xml',
+        'data/blog_to_email_cron.xml',
         'views/res_config_settings_views.xml',
     ],
     'post_init_hook': 'post_init_hook',

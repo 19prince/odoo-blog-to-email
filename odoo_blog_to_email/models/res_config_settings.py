@@ -22,3 +22,9 @@ class ResConfigSettings(models.TransientModel):
         default=3,
         config_parameter='odoo_blog_to_email.auto_mailing_post_count',
     )
+    last_refresh = fields.Char(
+        string='Last refresh',
+        readonly=True,
+        help='What the last refresh attempt did, or why it did nothing.',
+        config_parameter='odoo_blog_to_email.last_refresh',
+    )
