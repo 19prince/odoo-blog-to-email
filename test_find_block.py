@@ -8,7 +8,7 @@ odoo.api = types.SimpleNamespace(model_create_multi=lambda f: f)
 sys.modules['odoo'] = odoo
 sys.path.insert(0, 'odoo_blog_to_email/models')
 
-from blog_post import _find_block, _build_posts_block, BLOCK_ANCHOR, SLOT_START, SLOT_END  # noqa: E402
+from blog_post import _find_block, _splice_block, _build_posts_block, BLOCK_ANCHOR, SLOT_START, SLOT_END  # noqa: E402
 
 POSTS = [{'name': 'Newest', 'teaser': 'a', 'url': 'https://example.com/blog/a-1'},
          {'name': 'Older', 'teaser': 'b', 'url': 'https://example.com/blog/b-2'}]
@@ -39,4 +39,16 @@ assert _find_block(legacy) is None and SLOT_START in legacy
 assert _find_block('<div>nothing here</div>') is None
 assert BLOCK_ANCHOR in block
 
-print('ok')
+# the regression that shipped: body_arch reads back as Markup, and Markup + str
+# escapes the str operand, publishing the block as visible source text
+try:
+    from markupsafe import Markup
+except ImportError:
+    print('ok (markupsafe absent, skipped the Markup case)')
+else:
+    spliced = _splice_block(Markup(body), newer)
+    assert '&lt;div' not in spliced, spliced[spliced.find('&lt;div') - 80:][:200]
+    assert 'data-name="RecentPosts">' in spliced
+    assert _splice_block(Markup(f'{SLOT_START}\n{SLOT_END}'), newer).startswith('<div')
+    assert _splice_block(Markup('<div>no anchor</div>'), newer) is None
+    print('ok')

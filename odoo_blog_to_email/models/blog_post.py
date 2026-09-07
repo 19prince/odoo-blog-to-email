@@ -101,6 +101,26 @@ def _find_block(body):
     return None
 
 
+def _splice_block(body, posts_block):
+    """Body with the posts block swapped in, or None when there is no anchor.
+
+    ponytail: str(body) is load-bearing. body_arch reads back as Markup, and
+    Markup + str escapes the str operand - which published the block as visible
+    page source instead of markup. Keep the whole splice in plain str; the ORM
+    sanitises on write.
+    """
+    body = str(body or '')
+    span = _find_block(body)
+    if span:
+        return body[:span[0]] + posts_block + body[span[1]:]
+    if SLOT_START in body and SLOT_END in body:
+        # Legacy body whose comment markers are still intact. The block we write
+        # carries its own data-name anchor, so this runs at most once.
+        return re.sub(f'{re.escape(SLOT_START)}.*?{re.escape(SLOT_END)}',
+                      posts_block, body, flags=re.DOTALL)
+    return None
+
+
 def _build_posts_block(posts):
     """posts: list of dicts with 'name', 'teaser' and an absolute 'url'."""
     slots = []
@@ -204,18 +224,9 @@ class BlogPost(models.Model):
             'url': post.get_base_url().rstrip('/') + (post.website_url or '/'),
         } for post in posts])
 
-        body = mailing.body_arch or ''
-        span = _find_block(body)
-        if span:
-            new_body = body[:span[0]] + posts_block + body[span[1]:]
-        elif SLOT_START in body and SLOT_END in body:
-            # Legacy body whose comment markers are still intact. The block we
-            # write carries its own data-name anchor, so this runs at most once.
-            new_body = re.sub(
-                f'{re.escape(SLOT_START)}.*?{re.escape(SLOT_END)}',
-                posts_block, body, flags=re.DOTALL,
-            )
-        else:
+        body = str(mailing.body_arch or '')
+        new_body = _splice_block(body, posts_block)
+        if new_body is None:
             return self._obte_note(
                 f'no RecentPosts block in mailing {mailing_id} ({mailing.subject!r})', warn=True)
 
