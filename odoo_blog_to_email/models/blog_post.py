@@ -121,6 +121,22 @@ def _splice_block(body, posts_block):
     return None
 
 
+def _html_body(body):
+    """The body_html twin of an arch body: no empty <style>/<script> left to self-close.
+
+    ponytail: body_html declares sanitize='email_outgoing', which quietly sets
+    sanitize_output_method='xml' (odoo/fields.py) - so the mail editor's empty
+    <style id="design-element"></style> is written back as <style/>. body_arch
+    escapes this only because it passes sanitize_output_method="html" of its own.
+    HTML5 parsers do not honour a self-closed <style>: it opens RAWTEXT and
+    swallows the rest of the document, so Gmail rendered the whole mailing
+    blank while the text/plain part came through intact. Padding the element
+    denies the serialiser anything to self-close. Only <style> and <script>
+    matter - every other empty element self-closes harmlessly.
+    """
+    return re.sub(r'<(style|script)\b([^>]*)>\s*</\1\s*>',
+                  r'<\1\2>/**/</\1>', body, flags=re.IGNORECASE)
+
 def _build_posts_block(posts):
     """posts: list of dicts with 'name', 'teaser' and an absolute 'url'."""
     slots = []
@@ -233,5 +249,5 @@ class BlogPost(models.Model):
         if new_body == body:
             return self._obte_note(f'already current — {len(posts)} post(s)')
 
-        mailing.sudo().write({'body_arch': new_body, 'body_html': new_body})
+        mailing.sudo().write({'body_arch': new_body, 'body_html': _html_body(new_body)})
         self._obte_note(f'refreshed {mailing.subject!r} with {len(posts)} post(s)')

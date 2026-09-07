@@ -1,6 +1,6 @@
 {
     'name': 'Odoo Blog to Email',
-    'version': '18.0.3.0.1',
+    'version': '18.0.3.0.2',
     'category': 'Email Marketing',
     'summary': 'Refreshes a mailing when a tagged blog post is published. Configurable in Settings.',
     'author': '19 Prince',
