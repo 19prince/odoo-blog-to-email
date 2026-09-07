@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data noupdate="1">
     <record id="mailing_blog_to_email_starter" model="mailing.mailing">
         <field name="subject">Recent Posts — Your Newsletter</field>
         <field name="mailing_type">mail</field>
@@ -20,8 +21,11 @@
     </div>
 </div>
 
-<!-- BLOG_POSTS_SLOT:START -->
-<!-- BLOG_POSTS_SLOT:END -->
+<div class="s_text_block o_mail_snippet_general" style="background-color: #ffffff; padding: 0 32px 40px;" data-snippet="s_text_block" data-name="RecentPosts">
+    <div class="container s_allow_columns">
+        <p style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 14px; color: #888888; margin: 0;">Recent posts land here when you publish a tagged blog post.</p>
+    </div>
+</div>
 
 <!-- Footer -->
 <div class="s_footer_social o_mail_block_footer_social o_mail_footer_social_center o_mail_snippet_general bg-200 pt16" data-snippet="s_mail_block_footer_social" data-name="Footer Center">
@@ -52,8 +56,11 @@
     </div>
 </div>
 
-<!-- BLOG_POSTS_SLOT:START -->
-<!-- BLOG_POSTS_SLOT:END -->
+<div class="s_text_block o_mail_snippet_general" style="background-color: #ffffff; padding: 0 32px 40px;" data-snippet="s_text_block" data-name="RecentPosts">
+    <div class="container s_allow_columns">
+        <p style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 14px; color: #888888; margin: 0;">Recent posts land here when you publish a tagged blog post.</p>
+    </div>
+</div>
 
 <!-- Footer -->
 <div class="s_footer_social o_mail_block_footer_social o_mail_footer_social_center o_mail_snippet_general bg-200 pt16" data-snippet="s_mail_block_footer_social" data-name="Footer Center">
@@ -69,4 +76,5 @@
 </div></div></div></div>
 ]]></field>
     </record>
+    </data>
 </odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Safety net. The blog.post hooks keep the mailing current the moment
+             anything changes; this catches what never goes through them - a
+             scheduled post_date coming due, a data import, a restore. The
+             refresh writes nothing when the block is already correct, so a
+             daily tick is free. -->
+        <record id="ir_cron_refresh_auto_mailing" model="ir.cron">
+            <field name="name">Blog to Email: refresh mailing</field>
+            <field name="model_id" ref="website_blog.model_blog_post"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="state">code</field>
+            <field name="code">model._refresh_auto_mailing()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

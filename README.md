@@ -56,10 +56,10 @@ An Odoo module that automatically refreshes an email mailing with your latest ta
 
 When you activate the module, two things happen automatically:
 
-1. A starter mailing called **"Recent Posts — Your Newsletter"** is created in **Email Marketing → Mailings** as a draft — with the slot markers already in the body
-2. **Settings → Email Marketing** is pre-configured to point at that mailing
+1. A starter mailing called **"Recent Posts — Your Newsletter"** is created in **Email Marketing → Mailings** as a draft — with the Recent Posts block already in the body
+2. **Settings → Email Marketing** is pre-configured to point at that mailing, and a daily scheduled action is created as a safety net
 
-You only need to customise the mailing design and save your Settings. No manual marker insertion required.
+You only need to customise the mailing design and save your Settings. No manual block insertion required.
 
 ---
 
@@ -101,35 +101,50 @@ If you want the module to refresh a mailing you've already built:
 
 1. Open the mailing in the editor and switch to **Code view** (the `</>` button in the toolbar)
 2. Find the location in the HTML where you want the Recent Posts block to appear
-3. Insert these two comment markers on their own lines:
+3. Insert an empty anchor block there:
    ```html
-   <!-- BLOG_POSTS_SLOT:START -->
-   <!-- BLOG_POSTS_SLOT:END -->
+   <div class="s_text_block o_mail_snippet_general" data-snippet="s_text_block" data-name="RecentPosts">
+   </div>
    ```
 4. Save the mailing
 5. In **Settings → Email Marketing → Odoo Blog to Email**, set **Welcome mailing** to point at your mailing
 6. Click **Save**
 
-The module replaces everything between the two markers on each refresh. Content outside the markers is never touched.
+The module replaces that whole `data-name="RecentPosts"` element on each refresh. Everything outside it is never touched.
+
+> Earlier versions anchored on `<!-- BLOG_POSTS_SLOT:START -->` / `:END` comments. The mail editor **strips HTML comments on save**, so those anchors vanished the first time anyone edited the mailing and the refresh silently stopped. Comment markers are still honoured once, and are replaced with the `data-name` block on that first refresh.
 
 ---
 
 ## How the refresh works
 
-The module hooks into `blog.post.write()`. It fires when **all three** conditions are true:
+There is no refresh button, because there is nothing to press. The module re-renders whenever the answer could have changed:
 
-1. A blog post is written with `is_published = True`
-2. The post was not already published before that write (unpublish → publish transition only)
-3. At least one of the post's tags matches the configured Blog tag (case-insensitive)
+- **On any blog post create, write or delete** that touches `is_published`, `tag_ids`, `name`, `teaser`, `post_date`, `blog_id` or `active`
+- **Once a day**, via the `Blog to Email: refresh mailing` scheduled action — a safety net for anything that never passes through those hooks (a scheduled `post_date` coming due, a data import, a database restore)
 
-Unpublishing a post does **not** trigger a refresh. Publishing the same already-published post again does **not** trigger a refresh. The mailing's `state` field is never changed — it stays in draft.
+Both paths call the same method, and that method **writes only when the rendered block differs from what the mailing already holds**. Firing it constantly is free, which is what lets it fire on everything rather than trying to detect the one transition that matters.
+
+The mailing's `state` is never changed — it stays in draft.
+
+**Post URLs** come from each post's own website domain (`get_base_url()`), not from `web.base.url`. On a hosted instance those differ: `web.base.url` is the `*.odoo.com` hostname while the website record carries the real domain.
+
+### Seeing what it did
+
+**Settings → Email Marketing → Odoo Blog to Email → Last refresh** shows the outcome of the most recent attempt, including the reason when it did nothing:
+
+```
+2026-09-07 18:22:04 UTC — refreshed 'Welcome to 19 Prince!' with 3 post(s)
+2026-09-07 18:22:04 UTC — already current — 3 post(s)
+2026-09-07 18:22:04 UTC — no RecentPosts block in mailing 23 ('Welcome to 19 Prince!')
+```
 
 ---
 
 ## Testing
 
-1. Go to **Blog** and open any post tagged with your configured tag
-2. Unpublish it (if currently published), then publish it again
+1. Go to **Blog** and publish, retitle or tag any post
+2. Check **Settings → Email Marketing → Last refresh**
 3. Open your configured mailing in Email Marketing — the Recent Posts section should show the current top N posts
 
 > **Tip:** If the mailing is open in a browser tab when the refresh fires, close the tab and reopen the mailing. Saving from an open editor tab can overwrite the auto-refresh.
@@ -141,10 +156,11 @@ Unpublishing a post does **not** trigger a refresh. Publishing the same already-
 Events are logged to the standard Odoo server log:
 
 ```
-INFO  odoo_blog_to_email: refreshed mailing 23 with 3 post(s)
-WARN  odoo_blog_to_email: auto_mailing_id not configured — skipping refresh
-WARN  odoo_blog_to_email: slot markers not found in mailing 23 body — skipping
-WARN  odoo_blog_to_email: no published posts with tag 'newsletter' found
+INFO  odoo_blog_to_email: refreshed 'Welcome to 19 Prince!' with 3 post(s)
+INFO  odoo_blog_to_email: already current — 3 post(s)
+WARN  odoo_blog_to_email: no mailing configured in Settings
+WARN  odoo_blog_to_email: no RecentPosts block in mailing 23 ('Welcome to 19 Prince!')
+WARN  odoo_blog_to_email: no published posts tagged 'newsletter'
 ```
 
 ---

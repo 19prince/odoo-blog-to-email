@@ -19,6 +19,10 @@
                              help="How many recent posts to inject into the mailing.">
                         <field name="auto_mailing_post_count"/>
                     </setting>
+                    <setting string="Last refresh"
+                             help="What the last refresh attempt did. Refreshes are automatic - there is nothing to click.">
+                        <field name="last_refresh" readonly="1"/>
+                    </setting>
                 </block>
             </xpath>
         </field>
